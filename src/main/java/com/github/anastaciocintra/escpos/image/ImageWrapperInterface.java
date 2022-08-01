@@ -8,9 +8,9 @@ package com.github.anastaciocintra.escpos.image;
 import com.github.anastaciocintra.escpos.EscPosConst;
 
 public interface ImageWrapperInterface<T> {
-        
-    public byte[] getBytes(EscPosImage image);
-    public T setJustification(EscPosConst.Justification justification);
 
+    byte[] getBytes(EscPosImage image);
+
+    T setJustification(EscPosConst.Justification justification);
 
 }

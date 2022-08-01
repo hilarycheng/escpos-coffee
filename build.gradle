@@ -1,0 +1,72 @@
+import java.text.SimpleDateFormat
+
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'com.gladed.androidgitversion' version '0.4.5'
+}
+
+android {
+    compileSdkVersion 32
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        minSdkVersion 22
+        targetSdkVersion 32
+
+        versionName androidGitVersion.name()
+        versionCode androidGitVersion.code()
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            def gitCmd = "git log -1 --format=%cd --date=local"
+            def process = gitCmd.execute()
+            def gitDateStr = process.text
+            def gitDate = new Date(gitDateStr)
+            def sdf = new SimpleDateFormat("YYMMddHHmm")
+            buildConfigField "String", "BUILD_VERSION", "\"" + androidGitVersion.code() + "\""
+            buildConfigField "String", "BUILD_TIME", "\"" + sdf.format(gitDate) + "\""
+        }
+        uatRelease {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            def date = new Date(System.currentTimeMillis())
+            def sdf = new SimpleDateFormat("YYMMddHHmm")
+            buildConfigField "String", "BUILD_VERSION", "\"" + androidGitVersion.code() + "\""
+            buildConfigField "String", "BUILD_TIME", "\"" + sdf.format(date) + "-U\""
+        }
+        debug {
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-debug.pro'
+            def date = new Date(System.currentTimeMillis())
+            def sdf = new SimpleDateFormat("YYMMddHHmm")
+            buildConfigField "String", "BUILD_VERSION", "\"" + androidGitVersion.code() + "\""
+            buildConfigField "String", "BUILD_TIME", "\"" + sdf.format(date) + "-D\""
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21"
+    implementation 'androidx.core:core-ktx:1.7.0'
+//    implementation 'androidx.appcompat:appcompat:1.2.0'
+//    implementation 'com.google.android.material:material:1.2.1'
+//    testImplementation 'junit:junit:4.13.1'
+//    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}

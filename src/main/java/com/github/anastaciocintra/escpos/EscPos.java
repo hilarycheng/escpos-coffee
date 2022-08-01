@@ -24,6 +24,7 @@ import com.github.anastaciocintra.escpos.image.ImageWrapperInterface;
  */
 
 
+@SuppressWarnings("unused")
 public class EscPos implements Closeable, Flushable, EscPosConst {
 
     /**
@@ -78,12 +79,12 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
         public int value;
         public String charsetName;
 
-        private CharacterCodeTable(int value) {
+        CharacterCodeTable(int value) {
             this.value = value;
             this.charsetName = "cp437";
         }
 
-        private CharacterCodeTable(int value, String charsetName) {
+        CharacterCodeTable(int value, String charsetName) {
             this.value = value;
             this.charsetName = charsetName;
         }
@@ -99,7 +100,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
         PART(49);
         public int value;
 
-        private CutMode(int value) {
+        CutMode(int value) {
             this.value = value;
         }
     }
@@ -114,7 +115,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
         Pin_5(49);
         public int value;
 
-        private PinConnector(int value) {
+        PinConnector(int value) {
             this.value = value;
         }
     }
@@ -163,13 +164,13 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
      * <code>IOException</code> is thrown if the output stream is closed.
      * @see java.io.OutputStream#write(byte[], int, int)
      */
-    public EscPos write(byte b[], int off, int len) throws IOException {
+    public EscPos write(byte[] b, int off, int len) throws IOException {
         this.outputStream.write(b, off, len);
         return this;
     }
 
     /**
-     * call outputStrem.flush().
+     * call outputStream.flush().
      *
      * @exception IOException if an I/O error occurs.
      * @see java.io.OutputStream#flush()
@@ -293,6 +294,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
      * @exception IllegalArgumentException if characterCodeTable out of range 0
      * to 255
      */
+    @SuppressWarnings("UnusedReturnValue")
     public EscPos setPrinterCharacterTable(int characterCodeTable) throws IOException, IllegalArgumentException {
         if (characterCodeTable < 0 || characterCodeTable > 255) {
             throw new IllegalArgumentException("characterCodeTable must be between 0 and 255");
@@ -319,7 +321,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
      * <code>IOException</code> is thrown if the output stream is closed.
      * @see #setCharsetName(java.lang.String)
      */
-    public EscPos write(Style style, String text) throws UnsupportedEncodingException, IOException {
+    public EscPos write(Style style, String text) throws IOException {
         byte[] configBytes = style.getConfigBytes();
         write(configBytes, 0, configBytes.length);
         this.outputStream.write(text.getBytes(charsetName));
@@ -342,7 +344,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
      * @see #setCharsetName(java.lang.String)
      * @see PrintModeStyle
      */
-    public EscPos write(PrintModeStyle printModeStyle, String text) throws UnsupportedEncodingException, IOException {
+    public EscPos write(PrintModeStyle printModeStyle, String text) throws IOException {
         byte[] configBytes = printModeStyle.getConfigBytes();
         write(configBytes, 0, configBytes.length);
         this.outputStream.write(text.getBytes(charsetName));
@@ -360,7 +362,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
      * <code>IOException</code> is thrown if the output stream is closed.
      * @see #write(Style, String)
      */
-    public EscPos write(String text) throws UnsupportedEncodingException, IOException {
+    public EscPos write(String text) throws IOException {
         return write(style, text);
     }
 
@@ -377,7 +379,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
      * @see #write(Style, String)
      * @see #feed(int)
      */
-    public EscPos writeLF(Style style, String text) throws UnsupportedEncodingException, IOException {
+    public EscPos writeLF(Style style, String text) throws IOException {
         write(style, text);
         write(LF);
         return this;
@@ -395,7 +397,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
      * <code>IOException</code> is thrown if the output stream is closed.
      * @see #write(PrintModeStyle, String)
      */
-    public EscPos writeLF(PrintModeStyle printModeStyle, String text) throws UnsupportedEncodingException, IOException {
+    public EscPos writeLF(PrintModeStyle printModeStyle, String text) throws IOException {
         write(printModeStyle, text);
         write(LF);
         return this;
@@ -416,7 +418,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
      * @see #setStyle(Style)
      * @see #getStyle()
      */
-    public EscPos writeLF(String text) throws UnsupportedEncodingException, IOException {
+    public EscPos writeLF(String text) throws IOException {
         return writeLF(style, text);
     }
 
@@ -429,6 +431,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
      * @exception IOException if an I/O error occurs.
      * @see BarCodeWrapperInterface
      */
+    @SuppressWarnings("rawtypes")
     public EscPos write(BarCodeWrapperInterface barcode, String data) throws IOException {
         byte[] bytes = barcode.getBytes(data);
         write(bytes, 0, bytes.length);
@@ -445,6 +448,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
      * @exception IOException if an I/O error occurs.
      * @see ImageWrapperInterface
      */
+    @SuppressWarnings("rawtypes")
     public EscPos write(ImageWrapperInterface wrapper, EscPosImage image) throws IOException {
         byte[] bytes = wrapper.getBytes(image);
         write(bytes, 0, bytes.length);
@@ -554,8 +558,10 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
 
     }
 
-    public EscPos info() throws UnsupportedEncodingException, IOException {
+    @SuppressWarnings("ConstantConditions")
+    public EscPos info() throws IOException {
         final Properties properties = new Properties();
+        //noinspection SpellCheckingInspection
         properties.load(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("projectinfo.properties")));
         String Version = properties.getProperty("version");
         Style title = new Style()
@@ -572,6 +578,7 @@ public class EscPos implements Closeable, Flushable, EscPosConst {
         feed(3);
         getStyle().setJustification(Justification.Right);
         writeLF("github.com");
+        //noinspection SpellCheckingInspection
         writeLF("anastaciocintra/escpos-coffee");
         feed(5);
         cut(CutMode.FULL);

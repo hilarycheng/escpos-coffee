@@ -17,8 +17,8 @@ public class EscPosImage {
     protected final Bitonal bitonalAlgorithm;
 
     protected ByteArrayOutputStream baCachedEscPosRaster = new ByteArrayOutputStream();
-    protected List< ByteArrayOutputStream > CashedEscPosRasterRows_8 = new ArrayList();
-    protected List< ByteArrayOutputStream > CachedEscPosRasterRows_24 = new ArrayList();
+    protected List<ByteArrayOutputStream> CashedEscPosRasterRows_8 = new ArrayList<>();
+    protected List<ByteArrayOutputStream> CachedEscPosRasterRows_24 = new ArrayList<>();
 
 
     /**
@@ -93,7 +93,7 @@ public class EscPosImage {
             if((y + height) > image.getHeight()){
                 height = image.getHeight() - y;
             }
-            CoffeeImage row = (CoffeeImage) image.getSubimage(0, y, image.getWidth(), height);
+            CoffeeImage row = (CoffeeImage) image.getSubImage(0, y, image.getWidth(), height);
             lRGBImageRows.add(row);
         }
 

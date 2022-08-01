@@ -19,6 +19,7 @@ import java.util.logging.Logger;
  * be reused and the last command should be <code>close()</code>, after that,
  * you need to create another instance to send data to the printer.
  */
+@SuppressWarnings("unused")
 public class TcpIpOutputStream  extends PipedOutputStream {
     protected final PipedInputStream pipedInputStream;
     protected final Thread threadPrint;
@@ -39,9 +40,7 @@ public class TcpIpOutputStream  extends PipedOutputStream {
     public TcpIpOutputStream(String host, int port) throws IOException {
         pipedInputStream = new PipedInputStream();
         super.connect(pipedInputStream);
-        Thread.UncaughtExceptionHandler uncaughtException = (Thread t, Throwable e) -> {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage(),e);
-        };
+        Thread.UncaughtExceptionHandler uncaughtException = (Thread t, Throwable e) -> Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage(),e);
 
 
         Runnable runnablePrint = () -> {

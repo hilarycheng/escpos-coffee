@@ -9,23 +9,23 @@ public interface EscPosConst {
     /**
      *
      */
-    public final int NUL = 0;
-    public final int LF = 10;
-    public final int ESC = 27;
-    public final int GS = 29;
+    int NUL = 0;
+    int LF = 10;
+    int ESC = 27;
+    int GS = 29;
 
     /**
      * Values for print justification.
      *
-     * @see Style#setJustification(Justification) 
+     * @see Style#setJustification(Justification)
      */
-    public enum Justification {
+    enum Justification {
         Left_Default(48),
         Center(49),
         Right(50);
         public int value;
 
-        private Justification(int value) {
+        Justification(int value) {
             this.value = value;
         }
     }

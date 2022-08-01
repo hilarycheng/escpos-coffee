@@ -5,28 +5,32 @@
 package com.github.anastaciocintra.escpos.barcode;
 
 import com.github.anastaciocintra.escpos.EscPosConst;
+
 import java.io.ByteArrayOutputStream;
 
 /**
- * Supply ESC/POS BarCode commands  
+ * Supply ESC/POS BarCode commands
  */
-public class BarCode implements EscPosConst, BarCodeWrapperInterface{
-    
+@SuppressWarnings("unused")
+public class BarCode implements EscPosConst, BarCodeWrapperInterface<BarCode> {
+
     /**
      * Provides bar-code system. <p>
-     * Each system have one <code>regex</code> to help on validate data. 
+     * Each system have one <code>regex</code> to help on validate data.
+     *
      * @see #setSystem(BarCodeSystem)
      * @see java.util.regex.Pattern
      */
-    public enum BarCodeSystem{
+    @SuppressWarnings("SpellCheckingInspection")
+    public enum BarCodeSystem {
         /**
          * <code>regex: "\\d{11,12}$"</code>
          */
-        UPCA(0, "\\d{11,12}$"),  
+        UPCA(0, "\\d{11,12}$"),
         /**
          * <code>regex: "^\\d{11,12}$"</code>
          */
-        UPCA_B(65, "^\\d{11,12}$"),  
+        UPCA_B(65, "^\\d{11,12}$"),
         /**
          * <code>regex: "^\\d{6}$|^0{1}\\d{6,7}$|^0{1}\\d{10,11}$"</code>
          */
@@ -82,114 +86,117 @@ public class BarCode implements EscPosConst, BarCodeWrapperInterface{
         /**
          * <code>regex:  "^\\{[A-C][\\x00-\\x7F]+$"</code>
          */
-        CODE128(73, "^\\{[A-C][\\x00-\\x7F]+$")
-        ;
+        CODE128(73, "^\\{[A-C][\\x00-\\x7F]+$");
         public int code;
         public String regex;
-        private BarCodeSystem(int code, String regex){
+
+        BarCodeSystem(int code, String regex) {
             this.code = code;
             this.regex = regex;
         }
     }
 
-    
+
     /**
      * Provides Bar Code HRI Positions.<p>
-     * Human Readable Interpretation (HRI) position is the position of the text relative 
+     * Human Readable Interpretation (HRI) position is the position of the text relative
      * to the position of the bar-code.
+     *
      * @see #setHRIPosition(BarCodeHRIPosition)
      */
-    public enum BarCodeHRIPosition{
+    public enum BarCodeHRIPosition {
         /**
          * Do not Print the text
          */
-        NotPrinted_Default(48),  
-        /** 
+        NotPrinted_Default(48),
+        /**
          * Print the text above the bar-code
          */
         AboveBarCode(49),
-        /** 
+        /**
          * Print the text below the bar-code
          */
-        BelowBarCode(50), 
-        /** 
+        BelowBarCode(50),
+        /**
          * Print the text above and below the bar-code
          */
-        AboveAndBelowBarCode(51) 
-        ;
+        AboveAndBelowBarCode(51);
         public int value;
-        private BarCodeHRIPosition(int value){
+
+        BarCodeHRIPosition(int value) {
             this.value = value;
         }
     }
-    
+
     /**
      * Provides textHRI font for bar-code.<p>
-     * Human Readable Interpretation (HRI) font is the font of the text 
-     * printed with bar-code. 
+     * Human Readable Interpretation (HRI) font is the font of the text
+     * printed with bar-code.
+     *
      * @see #setHRIFont(BarCodeHRIFont)
      */
-    public enum BarCodeHRIFont{
-        Font_A_Default(48),  
+    public enum BarCodeHRIFont {
+        Font_A_Default(48),
         Font_B(49),
-        Font_C(50); 
+        Font_C(50);
         public int value;
-        private BarCodeHRIFont(int value){
+
+        BarCodeHRIFont(int value) {
             this.value = value;
         }
     }
-    
-    
-    protected BarCodeSystem sytem;
+
+
+    protected BarCodeSystem system;
     protected int width;
     protected int height;
     protected BarCodeHRIPosition HRIPosition;
     protected BarCodeHRIFont HRIFont;
     protected Justification justification;
-    
 
 
     /**
-     * Creates object with default values. 
+     * Creates object with default values.
      */
-    public BarCode(){
-        sytem = BarCodeSystem.CODE93_Default;
+    public BarCode() {
+        system = BarCodeSystem.CODE93_Default;
         width = 2;
         height = 100;
         HRIPosition = BarCodeHRIPosition.NotPrinted_Default;
         HRIFont = BarCodeHRIFont.Font_A_Default;
         justification = Justification.Left_Default;
     }
-    
+
     /**
      * Set bar-code system.
-     * 
+     *
      * @param barCodeSystem type of bar-code system.
      * @return this object.
-     * @see #getBytes(java.lang.String) 
+     * @see #getBytes(java.lang.String)
      */
     public BarCode setSystem(BarCodeSystem barCodeSystem) {
-        this.sytem = barCodeSystem;
+        this.system = barCodeSystem;
         return this;
     }
-    
+
     /**
      * Set bar-code size.<p>
      * ASCII GS w n
-     * @param width codes for widths of the module, 
-     * the width of module depends of printer model.
+     *
+     * @param width  codes for widths of the module,
+     *               the width of module depends of printer model.
      * @param height height of a bar code in dots.
      * @return this object.
      * @throws IllegalArgumentException when this condition is not true: 2 ≤ width ≤ 6, 68 ≤ width ≤ 76
      * @throws IllegalArgumentException when this condition is not true: 1 ≤ height ≤ 255
-     * @see #getBytes(java.lang.String) 
+     * @see #getBytes(java.lang.String)
      */
-    public BarCode setBarCodeSize(int width, int height) throws IllegalArgumentException{
-        if((width < 2 || width > 6) && (width < 68 || width > 76)){
-            throw new IllegalArgumentException("with must be between 1 and 255" );
+    public BarCode setBarCodeSize(int width, int height) throws IllegalArgumentException {
+        if ((width < 2 || width > 6) && (width < 68 || width > 76)) {
+            throw new IllegalArgumentException("with must be between 1 and 255");
         }
-        if(height < 1 || height > 255){
-            throw new IllegalArgumentException("height must be between 1 and 255" );
+        if (height < 1 || height > 255) {
+            throw new IllegalArgumentException("height must be between 1 and 255");
         }
         this.width = width;
         this.height = height;
@@ -198,28 +205,31 @@ public class BarCode implements EscPosConst, BarCodeWrapperInterface{
 
     /**
      * Set bar-code HRI Position.<p>
+     *
      * @param barCodeHRI position of the text
      * @return this object
-     * @see #getBytes(java.lang.String) 
+     * @see #getBytes(java.lang.String)
      */
     public BarCode setHRIPosition(BarCodeHRIPosition barCodeHRI) {
         this.HRIPosition = barCodeHRI;
         return this;
     }
-    
+
     /**
      * Set bar-code HRI Font.<p>
+     *
      * @param HRIFont font of the text printed with bar-code.
      * @return this object
-     * @see #getBytes(java.lang.String) 
+     * @see #getBytes(java.lang.String)
      */
     public BarCode setHRIFont(BarCodeHRIFont HRIFont) {
         this.HRIFont = HRIFont;
         return this;
     }
-    
+
     /**
      * Set horizontal justification of bar-code
+     *
      * @param justification left, center or right
      * @return this object
      */
@@ -227,40 +237,40 @@ public class BarCode implements EscPosConst, BarCodeWrapperInterface{
         this.justification = justification;
         return this;
     }
-    
+
 
     /**
      * BarCode Assembly into ESC/POS bytes. <p>
-     * 
+     * <p>
      * Set bar code height <p>
      * ASCII GS h n <p>
-     * 
+     * <p>
      * Set bar code width <p>
      * ASCII GS w n <p>
-     * 
-     * Select print position of Human Readable Interpretation (HRI) characters <p> 
+     * <p>
+     * Select print position of Human Readable Interpretation (HRI) characters <p>
      * ASCII GS H n
-     * 
+     * <p>
      * Select font for HRI characters <p>
      * ASCII GS f n
-     * 
+     * <p>
      * Select justification <p>
      * ASCII ESC a n <p>
-     * 
+     * <p>
      * print BarCode <p>
      * ASCII GS k m d1 ... dk <p>
-     * 
+     *
      * @param data to be printed in bar-code
+     * @return bytes of ESC/POS commands to print the bar-code
      * @throws IllegalArgumentException when data do no match with regex.
-     * @return bytes of ESC/POS commands to print the bar-code  
      */
     @Override
-    public byte[] getBytes(String data)throws IllegalArgumentException{
+    public byte[] getBytes(String data) throws IllegalArgumentException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        if(!data.matches(sytem.regex)){
-            throw new IllegalArgumentException(String.format("data must match with \"%s\"",sytem.regex) );
+        if (!data.matches(system.regex)) {
+            throw new IllegalArgumentException(String.format("data must match with \"%s\"", system.regex));
         }
-        
+
         //
         bytes.write(GS);
         bytes.write('h');
@@ -281,22 +291,22 @@ public class BarCode implements EscPosConst, BarCodeWrapperInterface{
         bytes.write(ESC);
         bytes.write('a');
         bytes.write(justification.value);
-        
-        
+
+
         ////
         bytes.write(GS);
         bytes.write('k');
 
-        bytes.write(sytem.code);
-        if(sytem.code <=6){
-            bytes.write(data.getBytes(),0,data.length());
+        bytes.write(system.code);
+        if (system.code <= 6) {
+            bytes.write(data.getBytes(), 0, data.length());
             bytes.write(NUL);
-        }else{
+        } else {
             bytes.write(data.length());
-            bytes.write(data.getBytes(),0,data.length());
-            
+            bytes.write(data.getBytes(), 0, data.length());
+
         }
         return bytes.toByteArray();
     }
-    
+
 }

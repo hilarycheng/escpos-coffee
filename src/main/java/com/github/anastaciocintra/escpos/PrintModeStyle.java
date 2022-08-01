@@ -5,17 +5,17 @@
 package com.github.anastaciocintra.escpos;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * Supply ESC/POS text style with the set of Print Mode commands
  * NOTE: You can use this class when your printer isn't compatible with Style class, otherwise, always
  * prefer to use Style class, this is because PrintModeStyle have less features than Style class.
  * Go to samples/textprintmodestyle to see how to use it.
- * @see Style
  *
+ * @see Style
  */
-public class PrintModeStyle implements EscPosConst{
+@SuppressWarnings({"SpellCheckingInspection", "unused"})
+public class PrintModeStyle implements EscPosConst {
     /**
      * Values of font name.
      *
@@ -26,7 +26,7 @@ public class PrintModeStyle implements EscPosConst{
         Font_B(1);
         public int value;
 
-        private FontName(int value) {
+        FontName(int value) {
             this.value = value;
         }
     }
@@ -66,7 +66,7 @@ public class PrintModeStyle implements EscPosConst{
     public final void reset() {
         fontName = FontName.Font_A_Default;
         setBold(false);
-        setFontSize(false,false);
+        setFontSize(false, false);
         justification = Justification.Left_Default;
     }
 
@@ -97,11 +97,12 @@ public class PrintModeStyle implements EscPosConst{
     /**
      * set font size
      *
-     * @param doubleWidth value used on ESC ! n
+     * @param doubleWidth  value used on ESC ! n
      * @param doubleHeight value used on ESC ! n
      * @return this object
      * @see #getConfigBytes()
      */
+    @SuppressWarnings("UnusedReturnValue")
     public final PrintModeStyle setFontSize(boolean doubleWidth, boolean doubleHeight) {
         this.doubleWidth = doubleWidth;
         this.doubleHeight = doubleHeight;
@@ -115,6 +116,7 @@ public class PrintModeStyle implements EscPosConst{
      * @return this object
      * @see #getConfigBytes()
      */
+    @SuppressWarnings("UnusedReturnValue")
     public final PrintModeStyle setUnderline(boolean underline) {
         this.underline = underline;
         return this;
@@ -145,22 +147,21 @@ public class PrintModeStyle implements EscPosConst{
      * <p>
      *
      * @return ESC/POS commands to configure style
-     * @exception IOException if an I/O error occurs.
      */
-    public byte[] getConfigBytes() throws IOException {
+    public byte[] getConfigBytes() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         // bit combination ...
         int nVal = fontName.value;
         //
         //
-        if(bold) nVal = nVal | 0x8;
+        if (bold) nVal = nVal | 0x8;
         //
         //
-        if(doubleHeight) nVal = nVal | 0x10;
-        if(doubleWidth) nVal = nVal | 0x20;
+        if (doubleHeight) nVal = nVal | 0x10;
+        if (doubleWidth) nVal = nVal | 0x20;
         //
         //
-        if(underline) nVal = nVal | 0x80;
+        if (underline) nVal = nVal | 0x80;
         //
         //
         bytes.write(EscPosConst.ESC);

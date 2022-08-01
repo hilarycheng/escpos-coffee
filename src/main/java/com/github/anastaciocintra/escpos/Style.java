@@ -5,11 +5,11 @@
 package com.github.anastaciocintra.escpos;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * Supply ESC/POS text style commands
  * Note: If your printer isn't compatible with this class, you can try to use PrintModeStyle class
+ *
  * @see PrintModeStyle
  */
 public class Style implements EscPosConst {
@@ -25,7 +25,7 @@ public class Style implements EscPosConst {
         Font_C(50);
         public int value;
 
-        private FontName(int value) {
+        FontName(int value) {
             this.value = value;
         }
     }
@@ -46,7 +46,7 @@ public class Style implements EscPosConst {
         _8(7);
         public int value;
 
-        private FontSize(int value) {
+        FontSize(int value) {
             this.value = value;
         }
     }
@@ -62,7 +62,7 @@ public class Style implements EscPosConst {
         TwoDotThick(50);
         public int value;
 
-        private Underline(int value) {
+        Underline(int value) {
             this.value = value;
         }
     }
@@ -77,7 +77,7 @@ public class Style implements EscPosConst {
         WhiteOnBlack(1);
         public int value;
 
-        private ColorMode(int value) {
+        ColorMode(int value) {
             this.value = value;
         }
     }
@@ -155,7 +155,7 @@ public class Style implements EscPosConst {
     /**
      * set font size
      *
-     * @param fontWidth value used on GS ! n
+     * @param fontWidth  value used on GS ! n
      * @param fontHeight value used on GS ! n
      * @return this object
      * @see #getConfigBytes()
@@ -198,6 +198,7 @@ public class Style implements EscPosConst {
      * @throws IllegalArgumentException when lineSpacing is not between 0 and 255.
      * @see #getConfigBytes()
      */
+    @SuppressWarnings("UnusedReturnValue")
     public final Style setLineSpacing(int lineSpacing) throws IllegalArgumentException {
         if (lineSpacing < 0 || lineSpacing > 255) {
             throw new IllegalArgumentException("lineSpacing must be between 0 and 255");
@@ -213,6 +214,7 @@ public class Style implements EscPosConst {
      * @return this object
      * @see #getConfigBytes()
      */
+    @SuppressWarnings("UnusedReturnValue")
     public final Style resetLineSpacing() {
         this.defaultLineSpacing = true;
         lineSpacing = 0;
@@ -237,44 +239,43 @@ public class Style implements EscPosConst {
      * <p>
      * ASCII ESC M n
      * <p>
-     *
+     * <p>
      * Turn emphasized(bold) mode on/off.
      * <p>
      * ASCII ESC E n
      * <p>
-     *
+     * <p>
      * set font size.
      * <p>
      * ASCII GS ! n
      * <p>
-     *
+     * <p>
      * select underline mode
      * <p>
      * ASCII ESC – n
      * <p>
-     *
+     * <p>
      * Select justification
      * <p>
      * ASCII ESC a n
      * <p>
-     *
+     * <p>
      * Select default line spacing
      * <p>
      * ASCII ESC 2
      * <p>
-     *
+     * <p>
      * Set line spacing
      * <p>
      * ASCII ESC 3 n
      * <p>
-     *
+     * <p>
      * Turn white/black reverse print mode on/off<p>
      * ASCII GS B n
      *
      * @return ESC/POS commands to configure style
-     * @exception IOException if an I/O error occurs.
      */
-    public byte[] getConfigBytes() throws IOException {
+    public byte[] getConfigBytes() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         //
         bytes.write(ESC);
